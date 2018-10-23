@@ -17,25 +17,23 @@ pandas_test = pandas_test.drop(["Id"], axis=1)
 data_test = np.array(pandas_test)
 X_test = data_test[:,:-1]
 
-# Choosing the best depth for criterion='entropy'
+print("Choosing the best depth for criterion='entropy':")
 for i in range(3, 35):  
     clf = DecisionTreeClassifier(criterion='entropy', max_depth=i, random_state=1)
     clf.fit(X_train, Y_train)
     prediction = clf.predict(X_test)
     acc_score = accuracy_score(Y_train, prediction)
     print("Depth = {0}, Accuracy = {1}".format(i, acc_score))
-# The best depth is 25
+print("The best depth is 25")
     
-# Choosing the best depth for criterion='gini'
-print('')
+print("\nChoosing the best depth for criterion='gini':")
 for i in range(3, 35):  
     clf = DecisionTreeClassifier(criterion='gini', max_depth=i, random_state=1)
     clf.fit(X_train, Y_train)
     prediction = clf.predict(X_test)
     acc_score = accuracy_score(Y_train, prediction)
-    print("Depth = {0}, Accuracy = {1}".format(i, acc_score))
-# The best depth is 25    
-    
+    print("Depth = {0}, Accuracy = {1}".format(i, acc_score))   
+print("The best depth is 32")    
     
 # Extracting not important features
 importances = clf.feature_importances_
@@ -65,10 +63,16 @@ print("\nDecision tree time execution(criterion='entropy' and depth=25 ):",
 start_time = datetime.datetime.now()
 clf = DecisionTreeClassifier(criterion='gini', max_depth=32, random_state=1)
 clf.fit(X_train, Y_train)
-print("\nDecision tree time execution(criterion='gini' and depth=32 ):",
+print("Decision tree time execution(criterion='gini' and depth=32 ):",
       datetime.datetime.now() - start_time)
 
-
+'''
+Results:
+the best depth for criterion='entropy' = 25
+Decision tree time execution(criterion='entropy' and depth=25 ): 0:00:00.177472
+the best depth for criterion='gini' = 32
+Decision tree time execution(criterion='gini' and depth=32 ): 0:00:00.142379
+''' 
 
 
 
