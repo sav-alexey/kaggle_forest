@@ -29,21 +29,28 @@ X = tf.placeholder(tf.float32, [None, 54])
 Y = tf.placeholder(tf.float32, [None, 7])
 
 weights = (tf.random_normal_initializer, "random_normal")
-#weights = (tf.random_normal_initializer(0, 0.1), "random_normal(0, 0.1)")
-#weights = (tf.contrib.layers.xavier_initializer(), "Xavier")
-#weights = (tf.truncated_normal_initializer, "truncated_normal")
+
 Z1 = tf.contrib.layers.fully_connected(X, 7, activation_fn=tf.nn.relu, weights_initializer=weights[0])
 A1 = tf.nn.softmax(Z1)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z1, labels=Y))
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.0001)
-objective = optimizer.minimize(cost)
+
+
+
+#optimizer = (tf.train.GradientDescentOptimizer(learning_rate=0.0001), "GradientDescentOptimizer")
+#optimizer = (tf.train.AdadeltaOptimizer(learning_rate=0.0001), "AdadeltaOptimizer")
+#optimizer = (tf.train.AdamOptimizer(learning_rate=0.0001), "AdamOptimizer")
+#optimizer = (tf.train.FtrlOptimizer(learning_rate=0.0001), "FtrlOptimizer")
+#optimizer = (tf.train.MomentumOptimizer(learning_rate=0.0001, momentum=0.1), "MomentumOptimizer")
+optimizer = (tf.train.RMSPropOptimizer(learning_rate=0.0001), "RMSPropOptimizer")
+
+objective = optimizer[0].minimize(cost)
 
 init = tf.global_variables_initializer()
 one_hot = tf.one_hot(Y_train, 7, axis=1)
 cost_array = np.zeros(iterations)
 print("""\nNeural network (number of hidden layers = 1(7 hidden units), weights_initializer = {0}, 
-                               learning_rate=0.0001, optimizer = Gradient descent) """.format(weights[1]))
+                               learning_rate=0.0001, optimizer = {1}) """.format(weights[1], optimizer[1]))
 with tf.Session() as sess:
     sess.run(init)
     Y_train = sess.run(one_hot)
@@ -65,37 +72,27 @@ plt.plot(range(iterations), cost_array)
 
 '''
 Results:
-Neural network (number of hidden layers = 1(7 hidden units), weights_initializer = random_normal_initializer(0, 0.1), 
-learning_rate=0.0001, optimizer = Gradient descent), 
-iterations = 10000,
-time execution: 0:01:43.469183
-train Accuracy = 0.32228836
 
-weights_initializer = Xavier (better for tanh)
-Train Accuracy = 0.22354497
+Optimizer = Gradient descent
+Train Accuracy: 0.20562169
 
-weights_initializer = truncated_normal
-Train Accuracy = 0.12850529
+Optimizer = AdadeltaOptimizer
+Train Accuracy: 0.17870371
 
-weights_initializer = random_normal
-Train Accuracy = 0.20562169
+Optimizer = AdamOptimizer
+Train Accuracy: 0.4367725
 
-Initialing all weights to 0 - this makes your model equivalent to a linear model.
+Optimizer = FtrlOptimizer
+Train Accuracy: 0.35482803
+(So wierd optimizer!)
+
+Optimizer = MomentumOptimizer
+Train Accuracy: 0.20853175
+
+Optimizer = RMSPropOptimizer
+Train Accuracy: 0.45119047
 
 ''' 
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
