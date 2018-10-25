@@ -37,12 +37,12 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=Z1, labels=
 
 
 
-#optimizer = (tf.train.GradientDescentOptimizer(learning_rate=0.0001), "GradientDescentOptimizer")
-#optimizer = (tf.train.AdadeltaOptimizer(learning_rate=0.0001), "AdadeltaOptimizer")
-#optimizer = (tf.train.AdamOptimizer(learning_rate=0.0001), "AdamOptimizer")
-#optimizer = (tf.train.FtrlOptimizer(learning_rate=0.0001), "FtrlOptimizer")
-#optimizer = (tf.train.MomentumOptimizer(learning_rate=0.0001, momentum=0.1), "MomentumOptimizer")
-optimizer = (tf.train.RMSPropOptimizer(learning_rate=0.0001), "RMSPropOptimizer")
+#optimizer = (tf.train.GradientDescentOptimizer(learning_rate=0.01), "GradientDescentOptimizer")
+#optimizer = (tf.train.AdadeltaOptimizer(learning_rate=0.01), "AdadeltaOptimizer")
+optimizer = (tf.train.AdamOptimizer(learning_rate=0.01), "AdamOptimizer")
+#optimizer = (tf.train.FtrlOptimizer(learning_rate=0.01), "FtrlOptimizer")
+#optimizer = (tf.train.MomentumOptimizer(learning_rate=0.01, momentum=0.1), "MomentumOptimizer")
+#optimizer = (tf.train.RMSPropOptimizer(learning_rate=0.01), "RMSPropOptimizer")
 
 objective = optimizer[0].minimize(cost)
 
@@ -50,7 +50,7 @@ init = tf.global_variables_initializer()
 one_hot = tf.one_hot(Y_train, 7, axis=1)
 cost_array = np.zeros(iterations)
 print("""\nNeural network (number of hidden layers = 1(7 hidden units), weights_initializer = {0}, 
-                               learning_rate=0.0001, optimizer = {1}) """.format(weights[1], optimizer[1]))
+                               learning_rate=0.01, optimizer = {1}) """.format(weights[1], optimizer[1]))
 with tf.Session() as sess:
     sess.run(init)
     Y_train = sess.run(one_hot)
@@ -74,23 +74,23 @@ plt.plot(range(iterations), cost_array)
 Results:
 
 Optimizer = Gradient descent
-Train Accuracy: 0.20562169
+Train Accuracy: 0.49861112
 
 Optimizer = AdadeltaOptimizer
-Train Accuracy: 0.17870371
+Train Accuracy: 0.22453703
 
 Optimizer = AdamOptimizer
-Train Accuracy: 0.4367725
+Train Accuracy: 0.6168651
 
 Optimizer = FtrlOptimizer
-Train Accuracy: 0.35482803
+Train Accuracy: 0.6429233
 (So wierd optimizer!)
 
 Optimizer = MomentumOptimizer
-Train Accuracy: 0.20853175
+Train Accuracy: 0.5075397
 
 Optimizer = RMSPropOptimizer
-Train Accuracy: 0.45119047
+Train Accuracy: 0.606746
 
 ''' 
 
