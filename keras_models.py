@@ -2,9 +2,11 @@ import numpy as np
 import pandas as pd
 from keras.models import Sequential
 from keras.layers import Dense
+import tensorflow as tf
 from sklearn import preprocessing
 from sklearn.preprocessing import OneHotEncoder
 import datetime 
+import os
 
 pandas_train = pd.read_csv("train.csv")
 pandas_train = pandas_train.drop(["Id"], axis=1)
@@ -18,12 +20,18 @@ Y_train = OneHotEncoder().fit_transform(Y_train)
 
 X_train = preprocessing.scale(X_train)
 
-iterations = 100
+iterations = 10
 
 pandas_test = pd.read_csv("train.csv")
 pandas_test = pandas_test.drop(["Id"], axis=1)
 data_test = np.array(pandas_test)
 X_test = data_test[:,:-1]
+
+path = "C:/Users/Administrator/.spyder-py3/GIT1/kaggle_forest/saved_weights"
+weigts_cp = "/cp.ckpt"
+checkpoint_dir = os.path.dirname(path+weigts_cp)
+cp = tf.keras.callbacks.ModelCheckpoint(checkpoint_dir, save_weights_only=True)
+
 
 model = Sequential()
 model.add(Dense(100, input_dim=54, activation='tanh'))
@@ -33,7 +41,8 @@ model.add(Dense(50, input_dim=500, activation='tanh'))
 model.add(Dense(7, input_dim=50, activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='RMSProp', metrics=['accuracy'])
 start_time = datetime.datetime.now()
-model.fit(X_train, Y_train, epochs=iterations, batch_size=None)
+model.load_weights(path)
+model.fit(X_train, Y_train, epochs=iterations, batch_size=None, callbacks=[cp])
 print("nn time execution:", datetime.datetime.now() - start_time)    
 
 '''

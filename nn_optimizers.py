@@ -15,7 +15,7 @@ Y_train = data_train[:,-1]
 
 X_train = preprocessing.scale(X_train)
 
-iterations = 10000
+iterations = 10
 
 pandas_test = pd.read_csv("train.csv")
 pandas_test = pandas_test.drop(["Id"], axis=1)
@@ -51,10 +51,13 @@ one_hot = tf.one_hot(Y_train, 7, axis=1)
 cost_array = np.zeros(iterations)
 print("""\nNeural network (number of hidden layers = 1(7 hidden units), weights_initializer = {0}, 
                                learning_rate=0.01, optimizer = {1}) """.format(weights[1], optimizer[1]))
+
+saver = tf.train.Saver(max_to_keep=100)
 with tf.Session() as sess:
     sess.run(init)
     Y_train = sess.run(one_hot)
     start_time = datetime.datetime.now()
+    saver.restore(sess, 'checkpoints/epoch.ckpt')
     for epoch in range(iterations):
         _, temp_cost, y_cap = sess.run([objective, cost, A1], feed_dict={X: X_train, Y: Y_train})
         cost_array[epoch] = temp_cost
@@ -65,6 +68,7 @@ with tf.Session() as sess:
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
     train_accuracy = accuracy.eval({X: X_train, Y: Y_train})
     print("\nTrain Accuracy:", train_accuracy)
+    saver.save(sess, "checkpoints/epoch.ckpt")
     
 plt.ylabel('cost')
 plt.xlabel('iterations')
